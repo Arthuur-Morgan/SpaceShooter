@@ -1,13 +1,22 @@
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 
 
 if getattr(sys, 'frozen', False):
-    SAVE_PATH = Path(sys.executable).resolve().parent / "save_data.json"
+    if sys.platform == "win32":
+        user_data_root = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
+    elif sys.platform == "darwin":
+        user_data_root = Path.home() / "Library" / "Application Support"
+    else:
+        user_data_root = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    SAVE_PATH = user_data_root / "SpaceShooter" / "save_data.json"
+    LEGACY_SAVE_PATH = Path(sys.executable).resolve().parent / "save_data.json"
 else:
     SAVE_PATH = Path(__file__).resolve().parent.parent / "save_data.json"
+    LEGACY_SAVE_PATH = None
 DEFAULT_SAVE = {
     "high_score": 0,
     "credits": 0,
@@ -32,8 +41,16 @@ DEFAULT_SAVE = {
 
 def load_save_data():
     """Load the save file, falling back safely if it is missing or malformed."""
+    load_path = SAVE_PATH
+    if not SAVE_PATH.exists() and LEGACY_SAVE_PATH and LEGACY_SAVE_PATH.exists():
+        try:
+            SAVE_PATH.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(LEGACY_SAVE_PATH, SAVE_PATH)
+        except OSError:
+            # Preserve access to progress if the one-time migration cannot write.
+            load_path = LEGACY_SAVE_PATH
     try:
-        with SAVE_PATH.open("r", encoding="utf-8") as save_file:
+        with load_path.open("r", encoding="utf-8") as save_file:
             saved = json.load(save_file)
         if not isinstance(saved, dict):
             raise ValueError("Save data must be a JSON object")
@@ -70,6 +87,7 @@ def write_save_data(data):
     """Atomically save progress so an interrupted write won't corrupt the file."""
     temporary_path = SAVE_PATH.with_suffix(".json.tmp")
     try:
+        SAVE_PATH.parent.mkdir(parents=True, exist_ok=True)
         with temporary_path.open("w", encoding="utf-8") as save_file:
             json.dump(data, save_file, indent=4)
             save_file.write("\n")
@@ -81,3 +99,4 @@ def write_save_data(data):
         except OSError:
             pass
         return False
+
