@@ -73,7 +73,7 @@ def build_app(onefile: bool = False):
         print(f"[PACKAGE CREATED] {zip_path}")
         size_mb = zip_path.stat().st_size / (1024 * 1024)
         print(f"Archive Size: {size_mb:.2f} MB")
-        print("\nReady to distribute: players can simply unzip and run SpaceShooter.exe!")
+        print("\nReady to distribute: extract the ZIP, open the SpaceShooter folder, and run SpaceShooter.exe!")
 
     return True
 
@@ -82,3 +82,4 @@ if __name__ == "__main__":
     is_onefile = "--onefile" in sys.argv
     success = build_app(onefile=is_onefile)
     sys.exit(0 if success else 1)
+

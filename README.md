@@ -98,55 +98,61 @@ All keybindings can be fully remapped in the in-game **KEYBINDS** terminal:
 | **Deploy Flare / Chaff Decoy** | `F` | Right Bumper (`RB` / `R2`) |
 | **Emergency Invincibility Panic** | `Q` | `Y` Button / Triangle |
 | **Pause Game** | `ESCAPE` | `START` / Options |
+| **Restart Run** | `R` or `ENTER` (paused/game over) | — |
+| **Return to Menu** | `ESCAPE` (game over) or `M` (paused) | — |
+| **Toggle Fullscreen** | `F11` | — |
 | **Developer Telemetry** | `F3` | — |
 
 ---
 
-## Installation & Quickstart
+## Download & Play (Windows)
 
-### Prerequisites
-- Python 3.10, 3.11, 3.12, 3.13, or 3.14
-- `pip` package manager
+Download the Windows ZIP from the [Releases page](https://github.com/Arthuur-Morgan/SpaceShooter/releases) and extract the complete `SpaceShooter` folder. Open that folder and run `SpaceShooter.exe`; keep the accompanying files and `assets` folder together. Python and Pygame are not required. On the first run, Windows may ask you to confirm that you trust the downloaded game.
 
-### 1. Clone or Download Repository
+The game stores progress and settings in your Windows user profile, so they remain available when you move or update the extracted game folder. Existing `save_data.json` files beside an older copy of the executable are migrated on first launch.
+
+### Controls and run flow
+
+- Press **Enter** or **Space** on the title screen to start a run.
+- Use the controls table above during a run. Press **Escape** to pause.
+- While paused, press **R** to restart, **M** to return to the title screen, or **Escape** to resume.
+- After game over, press **R** or **Enter** to play again, or **Escape** to return to the title screen.
+- Press **F11** to toggle fullscreen. Remap controls in the in-game **KEYBINDS** screen.
+
+### Run from source or build (developers)
+
+Requires Python 3.10 or later. Install dependencies and launch from the repository root:
+
 ```bash
-git clone https://github.com/your-username/SpaceShooter.git
-cd SpaceShooter
-```
-
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Launch the Game
-```bash
+python -m pip install -r requirements.txt
 python -m src.main
-# or directly:
-python src/main.py
 ```
 
-### 4. Build Standalone Executable (.exe)
+To build the standalone Windows folder and ZIP on 64-bit Windows:
+
 ```bash
+python -m pip install pyinstaller
 python build_app.py
 ```
-This automatically compiles the game into `dist/SpaceShooter/` and creates a ready-to-distribute archive: `dist/SpaceShooter-v1.0.0-Windows.zip`. Players can simply unzip and run without needing Python installed.
+
+The build creates `dist/SpaceShooter-v1.0.0-Windows.zip`. Extract the ZIP, open the `SpaceShooter` folder, and run `SpaceShooter.exe`.
 
 ---
 
 ## Verification & Test Suites
 
-The repository contains an exhaustive automated test suite with **64 out of 64 passing tests** verifying combat systems, AI behaviors, fleet transitions, and tutorial flows.
+The repository includes headless automated checks for combat systems, AI behaviors, fleet transitions, tutorial flows, and save persistence. Run them from the repository root:
 
-### Run All Combat Readiness Tests (43 tests)
+### Combat Readiness Checks
 ```bash
 python tests/test_combat_readiness.py
 ```
 *Verifies flocking repulsion, capital shield exclusion, keybind conflict swaps, parallax landmarks, overclocks, inset hitboxes, SARH guidance & flares, EMP torpedoes, Databank lore & tabs, Hybrid HD scaling, Shadow Interceptor movement & endgame gating, and the 6-stage tutorial calibration.*
 
-### Run Campaign & AI Tests (21 tests)
+### Campaign & AI Checks
 ```bash
 python tests/test_campaign_ai.py
+python tests/test_save_manager.py
 ```
 *Verifies fleet phase transitions, boss arrival gates, Aegis-Fable AI planning, corridor fair-play solver, Darwinian counter-adaptations, Black Box debrief generator, and Shadow Interceptor duels.*
 
@@ -187,3 +193,4 @@ SpaceShooter/
 - **Artwork & Assets**: FoozleCC / Baldur FleetPacks (CC0 Public Domain)
 
 Enjoy your flight, Pilot. Push back the Swarm and defend the fleet!
+
